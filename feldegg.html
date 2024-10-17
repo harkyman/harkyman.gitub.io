@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+	<style>
+		.bodycontainer {
+		  position: absolute;
+		  left: 50%;
+		  top: 50%;
+		  -webkit-transform: translate(-50%, -50%);
+		  transform: translate(-50%, -50%);
+		}
+
+		#btnRefresh {
+			color: transparent;
+			text-shadow: 0 0 0 #e5ffc1;
+			font-size: 23pt;
+		}
+
+		#btnRefresh:hover {
+			cursor: pointer;
+		}
+
+		
+		td {
+			font-family: "Sixtyfour", sans-serif;
+		  font-optical-sizing: auto;
+		  font-weight: 400;
+		  font-style: normal;
+		  font-variation-settings:
+			"BLED" 0,
+			"SCAN" -25,
+			"XELA" 0,
+			"YELA" 0;
+			color: #e5ffc1;
+		}
+		
+		body {
+			background-color: #5d635d;
+		}
+	</style>
+    <title>Zurich - Feldeggstrasse Departures</title>
+	<script>
+		function makeList(x) {
+				for (y=0;y<5;y++) {
+				  var display = [];
+				  var times = [];
+				  var delays = [];
+				  //display.push(x["stationboard"][y]["category"]); 
+				  display.push(x["stationboard"][y]["number"]); 
+				  display.push(" ");
+				  display.push(x["stationboard"][y]["to"]);
+				  times.push(Math.round((new Date(x["stationboard"][y]["stop"]["departure"]) - new Date())/60000));
+				  times.push("'");
+				  if (x["stationboard"][y]["stop"]["delay"] > 0) {
+					delays.push("(+"); 
+					delays.push(x["stationboard"][y]["stop"]["delay"]);
+					delays.push(")");
+				  } else {
+					delays.push();
+				  }
+				  $("#di" + y).html( display.join(""));
+				  $("#de" + y).html( delays.join(""));
+				  $("#ti" + y).html( times.join(""));
+				}
+			}
+				
+		document.addEventListener('DOMContentLoaded', function() {
+			fetch('http://transport.opendata.ch/v1/stationboard?id=8576197&limit=5&station=Zurich-Feldeggstrasse', {
+			   headers: {
+				  'Accept': 'application/json'
+			   }
+			})
+			   .then(response => response.text())
+			   .then(text => makeList(JSON.parse(text)));
+		}, false);
+		
+
+	</script>
+  </head>
+  <body>
+	<div class="bodycontainer">
+		<div><table id="board">
+			<tr><td id="di0"></td><td id="de0"></td><td id="ti0" style="text-align: right"></td></tr>
+			<tr><td id="di1"></td><td id="de1"></td><td id="ti1" style="text-align: right"></td></tr>
+			<tr><td id="di2"></td><td id="de2"></td><td id="ti2" style="text-align: right"></td></tr>
+			<tr><td id="di3"></td><td id="de3"></td><td id="ti3" style="text-align: right"></td></tr>
+			<tr><td id="di4"></td><td id="de4"></td><td id="ti4" style="text-align: right"></td></tr>
+		</table></div>
+		<div style="text-align: right;"><span id="btnRefresh">🚊</span></div>
+	</div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script type="text/javascript">
+		$(function()
+		{		
+			$("#btnRefresh").click(function() { location.reload(); } );
+			
+			
+		});
+	</script>
+  </body>
+</html>
